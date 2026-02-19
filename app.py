@@ -15,7 +15,7 @@ if st.button("Жауап алу"):
         with st.spinner("Ойланып жатырмын..."):
             try:
                 # ЕҢ ҚАРАПАЙЫМ ЖОЛ
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 response = model.generate_content(prompt)
                 
                 st.write("---")
@@ -25,4 +25,5 @@ if st.button("Жауап алу"):
                 # Егер тағы қате шықса, себебін анық көрсетеді
                 st.error(f"Қате шықты: {e}")
                 st.info("GitHub-та 'requirements.txt' файлын жасау керек болуы мүмкін.")
+
 
