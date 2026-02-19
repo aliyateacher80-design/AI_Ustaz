@@ -1,42 +1,27 @@
 import streamlit as st
-import os
-import subprocess
-import sys
-
-# СЕРВЕРДІ ЖАҢАРТУ (АВТОМАТТЫ ТҮРДЕ)
-@st.cache_resource
-def install_packages():
-    try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-U", "google-generativeai"])
-    except:
-        pass
-
-install_packages()
-
 import google.generativeai as genai
 
-# API КІЛТІҢ
+# API кілтің (Кілтті осы жерде қалдырдым)
 genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
 
-st.title("🤖 Менің Алғашқы Роботым")
+st.set_page_config(page_title="AI Ұстаз", page_icon="🤖")
+st.title("🤖 Менің Ақылды Роботым")
 
-# Сұрақ қою
-prompt = st.text_input("Маған сұрақ қойып көр (мысалы: Сәлем):")
+# Сұрақ жазатын орын
+prompt = st.text_input("Маған сұрақ қойыңыз:")
 
 if st.button("Жауап алу"):
     if prompt:
         with st.spinner("Ойланып жатырмын..."):
             try:
-                # Ең жаңа модельді қолдану
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                # ЕҢ ҚАРАПАЙЫМ ЖОЛ
+                model = genai.GenerativeModel('gemini-pro')
                 response = model.generate_content(prompt)
-                st.balloons() # Жеңіс белгісі!
+                
+                st.write("---")
                 st.success(response.text)
+                st.balloons() # Жеңіс шарлары!
             except Exception as e:
-                # Егер flash істемесе, ескірек нұсқасын байқау
-                try:
-                    model = genai.GenerativeModel('gemini-pro')
-                    response = model.generate_content(prompt)
-                    st.success(response.text)
-                except:
-                    st.error("Кішкене күте тұрыңыз, сервер жаңартылып жатыр. 1 минуттан соң бетті жаңартып (refresh) қайта байқаңыз.")
+                # Егер тағы қате шықса, себебін анық көрсетеді
+                st.error(f"Қате шықты: {e}")
+                st.info("GitHub-та 'requirements.txt' файлын жасау керек болуы мүмкін.")
