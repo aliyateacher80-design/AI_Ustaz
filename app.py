@@ -5,7 +5,7 @@ import asyncio
 import os
 
 # СЕНІҢ API КІЛТІҢ (Осы жерді тексер)
-genai.configure(api_key="СЕНІҢ_API_КІЛТІҢ_ОСЫНДА")
+genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
 
 st.title("🤖 Ақылды Робот-Ұстаз")
 
@@ -33,3 +33,4 @@ if st.button("Сұрау және Тыңдау"):
         
     except Exception as e:
         st.error(f"Қате шықты: {e}")
+
