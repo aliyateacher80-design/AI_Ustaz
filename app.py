@@ -5,8 +5,10 @@ import asyncio
 import os
 
 # СЕНІҢ API КІЛТІҢ (Осы жерді тексер)
-genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
-
+import os
+# 8-жолдың орнына осыны жаз:
+api_key = st.secrets["GOOGLE_API_KEY"]
+genai.configure(api_key=api_key)
 st.title("🤖 Ақылды Робот-Ұстаз")
 
 # Моделді ең сенімді нұсқаға ауыстырдық
@@ -33,6 +35,7 @@ if st.button("Сұрау және Тыңдау"):
         
     except Exception as e:
         st.error(f"Қате шықты: {e}")
+
 
 
 
