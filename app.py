@@ -1,34 +1,42 @@
 import streamlit as st
+import os
+import subprocess
+import sys
+
+# СЕРВЕРДІ ЖАҢАРТУ (АВТОМАТТЫ ТҮРДЕ)
+@st.cache_resource
+def install_packages():
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-U", "google-generativeai"])
+    except:
+        pass
+
+install_packages()
+
 import google.generativeai as genai
 
 # API КІЛТІҢ
 genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
 
-st.set_page_config(page_title="AI Ұстаз", page_icon="🤖")
-st.title("🤖 Менің Ақылды Роботым")
+st.title("🤖 Менің Алғашқы Роботым")
 
-prompt = st.text_input("Маған сұрақ қойыңыз:")
+# Сұрақ қою
+prompt = st.text_input("Маған сұрақ қойып көр (мысалы: Сәлем):")
 
 if st.button("Жауап алу"):
     if prompt:
         with st.spinner("Ойланып жатырмын..."):
             try:
-                # МӘЖБҮРЛІ ТҮРДЕ v1 НҰСҚАСЫН ЖӘНЕ flash МОДЕЛІН ҚОЛДАНУ
-                # Бұл 404 қатесін болдырмаудың ең сенімді жолы
-                model = genai.GenerativeModel(
-                    model_name='gemini-1.5-flash'
-                )
-                
+                # Ең жаңа модельді қолдану
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 response = model.generate_content(prompt)
-                
-                st.write("---")
-                if response.text:
-                    st.success(response.text)
-                    st.balloons() # Жеңіс шарлары!
-                else:
-                    st.warning("Жауап бос келді. Қайта байқаңыз.")
-                    
+                st.balloons() # Жеңіс белгісі!
+                st.success(response.text)
             except Exception as e:
-                # Егер тағы да 404 шықса, серверді "ояту" үшін хабарлама
-                st.error(f"Қате: {e}")
-                st.info("Сервер жаңартылуда. Егер қате кетпесе, Streamlit Cloud-та 'Reboot App' жасаңыз.")
+                # Егер flash істемесе, ескірек нұсқасын байқау
+                try:
+                    model = genai.GenerativeModel('gemini-pro')
+                    response = model.generate_content(prompt)
+                    st.success(response.text)
+                except:
+                    st.error("Кішкене күте тұрыңыз, сервер жаңартылып жатыр. 1 минуттан соң бетті жаңартып (refresh) қайта байқаңыз.")
