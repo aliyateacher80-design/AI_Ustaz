@@ -34,3 +34,4 @@ if st.button("Сұрау және Тыңдау"):
     except Exception as e:
         st.error(f"Қате шықты: {e}")
 
+
