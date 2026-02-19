@@ -7,7 +7,7 @@ import google.generativeai as genai
 # ЖИ баптаулары
 genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
 genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
-model = genai.GenerativeModel('models/gemini-1.5-flash')
+$$model = genai.GenerativeModel('models/gemini-1.5-flash')$$
 st.set_page_config(page_title="ЖИ Ұстаз", page_icon="🤖")
 st.title("🤖 Ақылды Робот-Ұстаз")
 
@@ -32,4 +32,5 @@ if st.button("Сұрау және Тыңдау"):
                 with open(audio_path, "rb") as f:
                     st.audio(f.read(), format="audio/mp3")
             except Exception as e:
+
                 st.error(f"Қате шықты: {e}")
