@@ -1,41 +1,16 @@
 import streamlit as st
 import google.generativeai as genai
-import edge_tts
-import asyncio
-import os
 
-# СЕНІҢ API КІЛТІҢ (Осы жерді тексер)
-import os
-# 8-жолдың орнына осыны жаз:
-api_key = st.secrets["GOOGLE_API_KEY"]
-genai.configure(api_key=api_key)
-st.title("🤖 Ақылды Робот-Ұстаз")
+# МЫНА ЖЕРГЕ ӨЗ КІЛТІҢДІ ҚОЙ ( image_2dfa01.png-дағы AIzaSy... )
+genai.configure(api_key="ОСЫ_ЖЕРГЕ_КІЛТТІ_ЖАЗ")
 
-# Моделді ең сенімді нұсқаға ауыстырдық
-model = genai.GenerativeModel('gemini-pro')
+st.title("🤖 Менің Роботым")
+model = genai.GenerativeModel('gemini-1.5-flash')
 
-prompt = st.text_input("Маған сұрақ қой немесе тақырып бер:", "Абай Құнанбаев кім?")
-
-if st.button("Сұрау және Тыңдау"):
+prompt = st.text_input("Маған сұрақ қой:")
+if st.button("Жауап ал"):
     try:
-        # 1. Жауап алу
         response = model.generate_content(prompt)
-        text_reply = response.text
-        st.write(text_reply)
-        
-        # 2. Дауысқа айналдыру
-        async def speak(text):
-            communicate = edge_tts.Communicate(text, "kk-KZ-AigulNeural")
-            await communicate.save("output.mp3")
-        
-        asyncio.run(speak(text_reply))
-        
-        # 3. Аудионы шығару
-        st.audio("output.mp3")
-        
+        st.success(response.text)
     except Exception as e:
-        st.error(f"Қате шықты: {e}")
-
-
-
-
+        st.error(f"Қате: {e}")
