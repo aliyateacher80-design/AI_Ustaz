@@ -1,45 +1,28 @@
-import os
-import subprocess
-import sys
-
-# СИҚЫРЛЫ ЖОЛ: Кітапхананы сайт ашылғанда өзі орнатады
-try:
-    import google.generativeai as genai
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "google-generativeai"])
-    import google.generativeai as genai
-
 import streamlit as st
+import google.generativeai as genai
 
-# Сенің API кілтің
+# API кілтің
 genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
 
-st.set_page_config(page_title="Ақылды Чат-бот", page_icon="💬")
-st.title("💬 Нағыз Чат-бот")
+st.title("🤖 Ақылды Ұстаз")
 
-# Есте сақтау бөлімі
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# Сұрақ жазатын орын
+prompt = st.text_input("Сұрағыңызды жазыңыз:")
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# Ең тұрақты модель
-model = genai.GenerativeModel('gemini-pro')
-
-if "chat" not in st.session_state:
-    st.session_state.chat = model.start_chat(history=[])
-
-if prompt := st.chat_input("Сұрақ жазыңыз..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    with st.chat_message("assistant"):
+if st.button("Жауап алу"):
+    if prompt:
         try:
-            response = st.session_state.chat.send_message(prompt)
-            st.markdown(response.text)
-            st.session_state.messages.append({"role": "assistant", "content": response.text})
+            # Ең сенімді модель нұсқасы
+            model = genai.GenerativeModel('gemini-pro')
+            response = model.generate_content(prompt)
+            st.write("---")
+            st.success(response.text)
         except Exception as e:
-            st.error("Кішкене күте тұрыңыз, жүйе дайындалып жатыр...")
+            st.error(f"Қате шықты. Мынаны байқап көрейік...")
+            try:
+                # Егер біріншісі істемесе, екінші нұсқа
+                model = genai.GenerativeModel('gemini-1.0-pro')
+                response = model.generate_content(prompt)
+                st.success(response.text)
+            except:
+                st.warning("Сервер жаңартылып жатыр. 1 минуттан соң қайталаңыз.")
