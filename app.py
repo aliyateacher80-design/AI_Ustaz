@@ -1,38 +1,35 @@
 import streamlit as st
-import asyncio
-import edge_tts
-import os
 import google.generativeai as genai
+import edge_tts
+import asyncio
+import os
 
-# ЖИ баптаулары
-genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
-genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
-model = genai.GenerativeModel('gemini-1.5-flash-latest')
-st.set_page_config(page_title="ЖИ Ұстаз", page_icon="🤖")
+# СЕНІҢ API КІЛТІҢ (Осы жерді тексер)
+genai.configure(api_key="СЕНІҢ_API_КІЛТІҢ_ОСЫНДА")
+
 st.title("🤖 Ақылды Робот-Ұстаз")
 
-user_input = st.text_input("Маған сұрақ қой немесе тақырып бер:", "Абай Құнанбаев кім?")
+# Моделді ең сенімді нұсқаға ауыстырдық
+model = genai.GenerativeModel('gemini-pro')
 
-async def text_to_speech(text):
-    VOICE = "kk-KZ-DauletNeural" 
-    output_file = "voice.mp3"
-    communicate = edge_tts.Communicate(text, VOICE)
-    await communicate.save(output_file)
-    return output_file
+prompt = st.text_input("Маған сұрақ қой немесе тақырып бер:", "Абай Құнанбаев кім?")
 
 if st.button("Сұрау және Тыңдау"):
-    if user_input:
-        with st.spinner('Робот ойланып жатыр...'):
-            try:
-                response = model.generate_content(f"Сен мектеп мұғалімісің. Қазақша қысқа жауап бер: {user_input}")
-                answer_text = response.text
-                st.info(answer_text)
-                
-                audio_path = asyncio.run(text_to_speech(answer_text))
-                with open(audio_path, "rb") as f:
-                    st.audio(f.read(), format="audio/mp3")
-            except Exception as e:
-
-                st.error(f"Қате шықты: {e}")
-
-
+    try:
+        # 1. Жауап алу
+        response = model.generate_content(prompt)
+        text_reply = response.text
+        st.write(text_reply)
+        
+        # 2. Дауысқа айналдыру
+        async def speak(text):
+            communicate = edge_tts.Communicate(text, "kk-KZ-AigulNeural")
+            await communicate.save("output.mp3")
+        
+        asyncio.run(speak(text_reply))
+        
+        # 3. Аудионы шығару
+        st.audio("output.mp3")
+        
+    except Exception as e:
+        st.error(f"Қате шықты: {e}")
