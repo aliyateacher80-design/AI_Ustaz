@@ -1,35 +1,44 @@
 import streamlit as st
-import google.generativeai as genai
+import os
 
-# API кілтің
+# 1. КЕРЕКТІ ҚҰРАЛДАРДЫ МӘЖБҮРЛІ ТҮРДЕ ЖАҢАРТУ
+import subprocess
+import sys
+
+def install_latest_gemini():
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "google-generativeai"])
+
+try:
+    import google.generativeai as genai
+except ImportError:
+    install_latest_gemini()
+    import google.generativeai as genai
+
+# 2. БАЙЛАНЫСТЫ ОРНАТУ
 genai.configure(api_key="AIzaSyBBj0iZFbTuj8cGWGu4Q_iiYG9kzWJIZr0")
 
-st.set_page_config(page_title="AI Ұстаз", page_icon="🤖")
-st.title("🤖 Менің Ақылды Роботым")
+st.title("🤖 AI Ұстаз: Жеңіс жақын!")
 
-# Сұрақ жазатын орын
-prompt = st.text_input("Маған сұрақ қойыңыз:")
+# Сұрақ жазу
+prompt = st.text_input("Сұрағыңызды осында жазыңыз:")
 
 if st.button("Жауап алу"):
     if prompt:
-        with st.spinner("Ойланып жатырмын..."):
+        with st.spinner("Миымды жаңартып, ойланып жатырмын..."):
             try:
-                # ЕҢ ТҰРАҚТЫ МОДЕЛЬ АТЫ (v1beta-сыз жұмыс істейді)
-                model = genai.GenerativeModel('gemini-1.5-flash-001')
-                
-                # Жауапты алу
+                # ЕҢ ТҰРАҚТЫ МОДЕЛЬ
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 response = model.generate_content(prompt)
                 
                 st.write("---")
-                if response.text:
-                    st.success(response.text)
-                    st.balloons() # Мерекелік шарлар!
+                st.success(response.text)
+                st.balloons()
             except Exception as e:
-                # Егер тағы да 404 шықса, соңғы амал:
+                # Егер тағы қате шықса, ең сенімді модельге көшу
                 try:
-                    model = genai.GenerativeModel('gemini-1.0-pro')
+                    model = genai.GenerativeModel('gemini-pro')
                     response = model.generate_content(prompt)
                     st.success(response.text)
                 except:
                     st.error(f"Қате: {e}")
-                    st.info("Бұл Google серверіндегі уақытша техникалық мәселе болуы мүмкін. 5 минуттан соң қайталап көріңіз.")
+                    st.info("Бетті жаңартып (Refresh), 1 минуттан соң қайта байқаңыз.")
