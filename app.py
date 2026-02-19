@@ -16,8 +16,8 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Модельді баптау (Мұнда модель атын өзгерттім)
-model = genai.GenerativeModel('gemini-pro')
+# Модельді баптау (Бұл жолы 'gemini-1.0-pro' деп көрейік)
+model = genai.GenerativeModel('gemini-1.0-pro')
 
 if "chat" not in st.session_state:
     st.session_state.chat = model.start_chat(history=[])
@@ -31,8 +31,10 @@ if prompt := st.chat_input("Хабарлама жазыңыз..."):
     # Роботтың жауабы
     with st.chat_message("assistant"):
         try:
+            # Маңызды: мұнда тек модельді шақырамыз
             response = st.session_state.chat.send_message(prompt)
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            st.error(f"Қате шықты: {e}")
+            st.error(f"Қате шықты: {e}. Басқа модельді байқап көрейік...")
+            # Егер тағы қате шықса, flash нұсқасын балама ретінде қосамыз
